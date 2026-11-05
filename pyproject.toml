@@ -1,0 +1,47 @@
+[project]
+name = "altisport-data"
+version = "0.1.0"
+description = "Pipeline data Alti Sport : S3 → Databricks → dbt, orchestré par Airflow"
+readme = "README.md"
+authors = [
+    { name = "Anass LAGRAINI", email = "anass.lagraini94@gmail.com" }
+]
+requires-python = ">=3.12,<3.13"
+dependencies = []
+
+[project.scripts]
+altisport-data = "altisport_data:main"
+
+[build-system]
+requires = ["uv_build>=0.13.7,<0.14.0"]
+build-backend = "uv_build"
+
+[dependency-groups]
+dbt = [
+    "dbt-core>=1.12,<1.13",
+    "dbt-databricks>=1.13,<1.14",
+    "sqlfluff>=4.5.0",
+    "sqlfluff-templater-dbt>=4.5.0",
+]
+dev = [
+    "pre-commit>=4.7.0",
+    "pytest>=9.2.0",
+    "ruff>=0.17.4",
+]
+
+[tool.uv]
+# `uv sync` installe dev + dbt pour un poste de dev ; la CI/Airflow choisiront leurs groupes explicitement.
+default-groups = ["dev", "dbt"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP", "S"]  # S = règles sécurité (bandit)
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**" = ["S101"]  # assert autorisé dans les tests
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
